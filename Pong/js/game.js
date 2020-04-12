@@ -45,8 +45,6 @@ var game = {
 			
         		return true;
 				  } 
-				  console.log("elodie tu pue");
-				game.score(this.posX);
       		return false;
     		},
   		},
@@ -91,20 +89,20 @@ var game = {
     	this.colideSound = new Audio("./sound/collide.ogg");
     	game.ai.setPlayerAndBall(this.playerTwo,this.ball);
 	},
-	 score : function(position){
-		 console.log(position);
-		if(position <= 0){
+	 score : function(){
+		if(game.ball.posX <= -3){
 			this.playerTwo.score += 1;
-			//this.init();
 			this.clearLayer(this.scoreLayer);
 			this.displayScore(this.playerOne.score,this.playerTwo.score);
+			return true;
 		  }
-		  else if(position >= 700){
+		  else if(game.ball.posX >= 700){
 			this.playerOne.score += 1;
-			//this.init();
 			this.clearLayer(this.scoreLayer);
 			this.displayScore(this.playerOne.score,this.playerTwo.score);
-		  }
+			return true;
+		}
+		  return false;
 	 },
 
 	//displays function
