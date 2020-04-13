@@ -29,22 +29,19 @@ var game = {
   		bounce : function(soundToPlay) {
   			if ( this.posX > game.groundWidth || this.posX < 0 ) {
   				this.directionX = -this.directionX;
-  				soundToPlay.play()
+  				//soundToPlay.play()
   			}
   			if ( this.posY > game.groundHeight || this.posY < 0  ) {
   				this.directionY = -this.directionY;    
-  				soundToPlay.play();  
+  				//soundToPlay.play();  
   			}
   		},
   		collide : function(anotherItem) {
-			  	
       			if ( !( this.posX >= anotherItem.posX + anotherItem.width || this.posX <= anotherItem.posX
       				|| this.posY >= anotherItem.posY + anotherItem.height || this.posY <= anotherItem.posY ) ) {
-						  
-			// Collision
-			
+        // Collision
         		return true;
-				  } 
+      			} 
       		return false;
     		},
   		},
@@ -71,9 +68,19 @@ var game = {
     	goUp : false,
     	goDown : false,	
 		originalPosition: "left",
-		score : 0,	
-    },
-
+		score : 0,
+	},
+	//On choisi le 
+	//main player
+	mainPlayer : null,
+	setMainPlayer : function(){
+		var myselect = document.getElementById("choixPlayer");
+		this.mainPlayer = myselect.options[myselect.selectedIndex].value;
+		console.log(this.mainPlayer);
+	},
+	// socket
+	socket: null,
+	socket2 : null,
 
     init : function() {
     	this.groundLayer = game.display.createLayer("terrain", this.groundWidth, this.groundHeight, undefined, 0, "#000000", 0, 0); 
@@ -88,8 +95,10 @@ var game = {
     	this.wallSound = new Audio("./sound/wall.ogg");
     	this.colideSound = new Audio("./sound/collide.ogg");
     	game.ai.setPlayerAndBall(this.playerTwo,this.ball);
+    	this.initConnection();
 	},
-	 score : function(){
+	//Affichage des scores
+	score : function(){
 		if(game.ball.posX <= -3){
 			this.playerTwo.score += 1;
 			this.clearLayer(this.scoreLayer);
@@ -104,7 +113,15 @@ var game = {
 		}
 		  return false;
 	 },
-
+	//function to connect game
+	initConnection : function(){
+		this.socket = io.connect('http://localhost:3000/');
+		this.socket.on("move",function(data) {
+			console.log("4444444444");
+			console.log(data);
+			game.playerOne = data;
+		})
+	},
 	//displays function
 	displayScore : function(scorePlayer1, scorePlayer2) {
 		game.display.drawTextInLayer(this.scoreLayer, scorePlayer1, "60px Arial", "#FFFFFF", this.scorePosPlayer1, 55);
@@ -139,30 +156,53 @@ var game = {
   		window.onmousemove = onMouseMoveFunction;
   	},
   	// Move
-  	movePlayers : function() {
+  	updatePlayers : function() {
   		if ( game.control.controlSystem == "KEYBOARD" ) {
       // keyboard control
-   		if (game.playerOne.goUp && game.playerOne.posY > 0)
-      		game.playerOne.posY-=5;
-    	else if (game.playerOne.goDown && game.playerOne.posY < game.groundHeight - game.playerOne.height)
-      		game.playerOne.posY+=5;
+   		if (game.playerOne.goUp && game.playerOne.posY > 0) {
+			this.socket.emit("playerOne",game.playerOne);
+		}
+    	else if (game.playerOne.goDown && game.playerOne.posY < game.groundHeight - game.playerOne.height) {
+			this.socket.emit("playerOne",game.playerOne);
+		}
   		} else if ( game.control.controlSystem == "MOUSE" ) {
       // mouse control
-      if (game.playerOne.goUp && game.playerOne.posY > game.control.mousePointer)
-      	game.playerOne.posY-=5;
-      else if (game.playerOne.goDown && game.playerOne.posY < game.control.mousePointer)
-      	game.playerOne.posY+=5;
+      if (game.playerOne.goUp && game.playerOne.posY > game.control.mousePointer) {
+		  this.socket.emit("playerOne",game.playerOne);
+	  }
+      else if (game.playerOne.goDown && game.playerOne.posY < game.control.mousePointer) {
+				this.socket.emit("playerOne",game.playerOne);
+			}
   }
 },
+	movePlayers : function() {
+		if ( game.control.controlSystem == "KEYBOARD" ) {
+			// keyboard control
+			if (game.playerOne.goUp && game.playerOne.posY > 0) {
+				game.playerOne.posY-=5;
+			}
+			else if (game.playerOne.goDown && game.playerOne.posY < game.groundHeight - game.playerOne.height) {
+				game.playerOne.posY+=5;
+			}
+		} else if ( game.control.controlSystem == "MOUSE" ) {
+			// mouse control
+			if (game.playerOne.goUp && game.playerOne.posY > game.control.mousePointer) {
+				game.playerOne.posY-=5;
+			}
+			else if (game.playerOne.goDown && game.playerOne.posY < game.control.mousePointer) {
+				game.playerOne.posY+=5;
+			}
+		}
+	},
 
   collideBallWithPlayersAndAction : function() { 
     if ( this.ball.collide(game.playerOne) ) {
     	game.ball.directionX = -game.ball.directionX;
-    	this.colideSound.play()
+    	//this.colideSound.play()
     }
     if ( this.ball.collide(game.playerTwo) ) {
     	game.ball.directionX = -game.ball.directionX;
-    	this.colideSound.play()
+    	//this.colideSound.play()
     }
   }, 
 };

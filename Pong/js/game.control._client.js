@@ -9,7 +9,7 @@ game.control = {
 			game.playerOne.goUp = true;
 		}
 		toSend= {
-			source: "player1",
+			source: "player2",
 			player: game.playerOne
 		}
 		game.playerOne.source = "player2";
@@ -23,7 +23,7 @@ game.control = {
 			game.playerOne.goUp = false;
 		}
 		toSend= {
-			source: "player1",
+			source: "player2",
 			player: game.playerOne
 		}
 		game.playerOne.source = "player2";
