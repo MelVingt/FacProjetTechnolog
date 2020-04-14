@@ -6,6 +6,9 @@ sockets.on('connection', function (socket) {
         players = data;
         sockets.emit("move",data);    
     });
+    socket.on('score',function(score1,score2){
+        sockets.emit('score',score1,score2);
+    });
     sockets.emit("ball",ball);
 });
 

@@ -52,12 +52,12 @@ var game = {
   		width : 10,
   		height : 50,
   		color : "#FFFFFF",
-  		posX : 10,
+  		posX : 75,
   		posY : 200,
   		goUp : false,
   		goDown : false,
-		  originalPosition: "left",
-		  score : 0,
+		originalPosition: "left",
+		score : 0,
   	},
     //player 2
     playerTwo : {
@@ -105,14 +105,16 @@ var game = {
 	score : function(){
 		if(game.ball.posX <= -3){
 			this.playerTwo.score += 1;
-			this.clearLayer(this.scoreLayer);
-			this.displayScore(this.playerOne.score,this.playerTwo.score);
+			this.socket.emit('score',this.playerOne.score,this.playerTwo.score);
+			//this.clearLayer(this.scoreLayer);
+			//this.displayScore(this.playerOne.score,this.playerTwo.score);
 			return true;
 		  }
 		  else if(game.ball.posX >= 700){
 			this.playerOne.score += 1;
-			this.clearLayer(this.scoreLayer);
-			this.displayScore(this.playerOne.score,this.playerTwo.score);
+			this.socket.emit('score',this.playerOne.score,this.playerTwo.score);
+			//this.clearLayer(this.scoreLayer);
+			//this.displayScore(this.playerOne.score,this.playerTwo.score);
 			return true;
 		}
 		  return false;
@@ -131,7 +133,16 @@ var game = {
       console.log("i have receveid it");
       game.ball=ball;
       game.displayBall();
-    })
+	});
+	//gestion des score en socket
+	this.socket.on('score',function(score1,score2){
+		//console.log("player1 : "+score1+"Player2 : "+score2);
+		game.playerOne.score = score1;
+		game.playerTwo.score = score2;
+		console.log("player1 : "+game.playerOne.score+"Player2 : "+game.playerTwo.score);
+		game.clearLayer(game.scoreLayer);
+		game.displayScore(game.playerOne.score,game.playerTwo.score);
+	})
 	},
 	//displays function
 	displayScore : function(scorePlayer1, scorePlayer2) {

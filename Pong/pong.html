@@ -5,9 +5,9 @@
  <body>
     <FORM class="choixPlayer" >
       <SELECT id="choixPlayer" onChange="game.setMainPlayer()">
-        <OPTION VALUE="0">Choix du player
-        <OPTION VALUE="1">Player 1
-        <OPTION VALUE="2">Player 2
+        <OPTION VALUE="0" SELECTED>Choix du player </OPTION>
+        <OPTION VALUE="1">Player 1</OPTION>
+        <OPTION VALUE="2">Player 2</OPTION>
       </SELECT>
     </FORM>
  </body>
@@ -36,7 +36,9 @@
     game.movePlayers();
     game.displayPlayers();
     game.displayBall();
-    game.score();
+    if (game.mainPlayer == 1){
+      game.score();
+    }
     requestAnimId = window.requestAnimationFrame(main); // rappel de main au prochain rafraîchissement de la page
   }
   
