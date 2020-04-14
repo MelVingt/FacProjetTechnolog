@@ -48,6 +48,7 @@ var game = {
   	//datas for racket
   	//player 1
   	playerOne : {
+      id:1,
   		width : 10,
   		height : 50,
   		color : "#FFFFFF",
@@ -55,11 +56,12 @@ var game = {
   		posY : 200,
   		goUp : false,
   		goDown : false,
-		originalPosition: "left",
-		score : 0,
+		  originalPosition: "left",
+		  score : 0,
   	},
     //player 2
     playerTwo : {
+      id:2,
     	width : 10,
     	height : 50,
     	color : "#FFFFFF",
@@ -70,6 +72,7 @@ var game = {
 		originalPosition: "left",
 		score : 0,
 	},
+  players : [],
 	//On choisi le 
 	//main player
 	mainPlayer : null,
@@ -77,10 +80,11 @@ var game = {
 		var myselect = document.getElementById("choixPlayer");
 		this.mainPlayer = myselect.options[myselect.selectedIndex].value;
 		console.log(this.mainPlayer);
-	},
+    game.control.currentPlayer = parseInt(this.mainPlayer)-1;
+    this.initConnection()
+  	},
 	// socket
 	socket: null,
-	socket2 : null,
 
     init : function() {
     	this.groundLayer = game.display.createLayer("terrain", this.groundWidth, this.groundHeight, undefined, 0, "#000000", 0, 0); 
@@ -94,8 +98,8 @@ var game = {
     	this.initMouse(game.control.onMouseMove);
     	this.wallSound = new Audio("./sound/wall.ogg");
     	this.colideSound = new Audio("./sound/collide.ogg");
-    	game.ai.setPlayerAndBall(this.playerTwo,this.ball);
-    	this.initConnection();
+      game.players[0] = game.playerOne;
+      game.players[1] = game.playerTwo;
 	},
 	//Affichage des scores
 	score : function(){
@@ -116,11 +120,18 @@ var game = {
 	//function to connect game
 	initConnection : function(){
 		this.socket = io.connect('http://localhost:3000/');
-		this.socket.on("move",function(data) {
-			console.log("4444444444");
-			console.log(data);
-			game.playerOne = data;
-		})
+    this.socket.on("move",function(data) {
+	  console.log("data before",data);
+      for(let item in data) {
+		game.players[item]= data[item];
+	  }
+	  console.log("data after",data);
+    });
+    this.socket.on("ball",function(ball){
+      console.log("i have receveid it");
+      game.ball=ball;
+      game.displayBall();
+    })
 	},
 	//displays function
 	displayScore : function(scorePlayer1, scorePlayer2) {
@@ -133,8 +144,11 @@ var game = {
 	},
 
 	displayPlayers : function() {
-		game.display.drawRectangleInLayer(this.playersBallLayer, this.playerOne.width, this.playerOne.height, this.playerOne.color, this.playerOne.posX, this.playerOne.posY);
-		game.display.drawRectangleInLayer(this.playersBallLayer, this.playerTwo.width, this.playerTwo.height, this.playerTwo.color, this.playerTwo.posX, this.playerTwo.posY);
+    for(let playerIndex in game.players) {
+        player = game.players[playerIndex];
+        game.display.drawRectangleInLayer(this.playersBallLayer, player.width, player.height, player.color, player.posX, player.posY);
+    }
+		
 	},
 
 	moveBall : function(){
@@ -156,44 +170,29 @@ var game = {
   		window.onmousemove = onMouseMoveFunction;
   	},
   	// Move
-  	updatePlayers : function() {
-  		if ( game.control.controlSystem == "KEYBOARD" ) {
-      // keyboard control
-   		if (game.playerOne.goUp && game.playerOne.posY > 0) {
-			this.socket.emit("playerOne",game.playerOne);
-		}
-    	else if (game.playerOne.goDown && game.playerOne.posY < game.groundHeight - game.playerOne.height) {
-			this.socket.emit("playerOne",game.playerOne);
-		}
-  		} else if ( game.control.controlSystem == "MOUSE" ) {
-      // mouse control
-      if (game.playerOne.goUp && game.playerOne.posY > game.control.mousePointer) {
-		  this.socket.emit("playerOne",game.playerOne);
-	  }
-      else if (game.playerOne.goDown && game.playerOne.posY < game.control.mousePointer) {
-				this.socket.emit("playerOne",game.playerOne);
-			}
-  }
-},
 	movePlayers : function() {
+    game.movePlayer(game.players[0]);
+    game.movePlayer(game.players[1]);
+	},
+  // Move a player
+    movePlayer : function(player) {
 		if ( game.control.controlSystem == "KEYBOARD" ) {
-			// keyboard control
-			if (game.playerOne.goUp && game.playerOne.posY > 0) {
-				game.playerOne.posY-=5;
+		// keyboard control
+			if (player.goUp && player.posY > 0) {
+				player.posY-=5;
 			}
-			else if (game.playerOne.goDown && game.playerOne.posY < game.groundHeight - game.playerOne.height) {
-				game.playerOne.posY+=5;
-			}
-		} else if ( game.control.controlSystem == "MOUSE" ) {
-			// mouse control
-			if (game.playerOne.goUp && game.playerOne.posY > game.control.mousePointer) {
-				game.playerOne.posY-=5;
-			}
-			else if (game.playerOne.goDown && game.playerOne.posY < game.control.mousePointer) {
-				game.playerOne.posY+=5;
+			else if (player.goDown && player.posY < game.groundHeight - player.height) {
+				player.posY+=5;
+			} else if ( game.control.controlSystem == "MOUSE" ) {
+				//mouse control
+				if (game.playerOne.goUp && game.playerOne.posY > game.control.mousePointer) {
+				player.posY-=5;
+				} else if (game.playerOne.goDown && game.playerOne.posY < game.control.mousePointer) {
+					player.posY+=5;
+				}
 			}
 		}
-	},
+    },
 
   collideBallWithPlayersAndAction : function() { 
     if ( this.ball.collide(game.playerOne) ) {
