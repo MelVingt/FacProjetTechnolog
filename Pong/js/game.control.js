@@ -5,11 +5,12 @@ game.control = {
 	onKeyDown : function(event) {
 		game.control.controlSystem = "KEYBOARD";
 		if ( event.keyCode == game.keycode.KEYDOWN ) {
+			console.log("i go down");
 			game.players[game.control.currentPlayer].goDown = true;
 		} else if ( event.keyCode == game.keycode.KEYUP ) {
 			game.players[game.control.currentPlayer].goUp = true;
 		}
-		game.socket.emit("playerOne",game.players);
+		game.socket.emit("updateMove",game.players);
 	},
 
 	onKeyUp : function(event) {
@@ -18,7 +19,7 @@ game.control = {
 		} else if ( event.keyCode == game.keycode.KEYUP ) {
 			game.players[game.control.currentPlayer].goUp = false;
 		}
-		game.socket.emit("playerOne",game.players);
+		game.socket.emit("updateMove",game.players);
 	},
 
 	onMouseMove : function(event) {
