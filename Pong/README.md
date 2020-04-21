@@ -18,10 +18,15 @@ En cas de problème relancez le server.
 
 <H1>Photo</H1>
 <H2>Accueil</H2>
-![Alt text](Image/pongAccueil.PNG?raw=true "Accueil")
+
+![Alt text](/Image/pongAccueil.PNG?raw=true "Accueil")
+
 <br>
 <H2>Deux joueurs</H2>
-![Alt text](Image/pongAccueil.PNG?raw=true "2 joueurs")
+
+![Alt text](/Image/pongAccueil.PNG?raw=true "2 joueurs")
+
 <br>
 <H2>Quatre joueurs</H2>
-![Alt text](Image/pong2.PNG?raw=true "4 joueurs")
+
+![Alt text](/Image/pong2.PNG?raw=true "4 joueurs")
