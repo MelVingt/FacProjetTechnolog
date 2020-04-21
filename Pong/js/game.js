@@ -1,5 +1,4 @@
 var game = {
-	//general datas
 	groundWidth : 700,
 	groundHeight : 400,
 	groundColor: "#000000",
@@ -9,17 +8,14 @@ var game = {
 	// datas for scorePlayer
 	scorePosPlayer1 : 270,
 	scorePosPlayer2 : 395,
-  // datas for ball
-  ball : null,
-  //datas for racket
-  //player 1
-  players : [],
+	ball : null,
+	players : [],
 	//On choisi le 
-	//main player
+	//main player = player de la fenêtre
 	mainPlayer : null,
 	setMainPlayer : function(){
-		var myselect = document.getElementById("choixPlayer");
-		this.mainPlayer = myselect.options[myselect.selectedIndex].value;
+	var myselect = document.getElementById("choixPlayer");
+	this.mainPlayer = myselect.options[myselect.selectedIndex].value;
     game.control.currentPlayer = parseInt(this.mainPlayer)-1;
     this.initConnection()
   	},
@@ -56,17 +52,18 @@ var game = {
 		var numberOfPlayer = document.querySelector('input[name="numberOfPlayer"]:checked').value;
 		this.socket.emit("numberOfPlayer",parseInt(numberOfPlayer));
 	},
-  playerIsReady: function(){
-    if(game.mainPlayer!=0&&game.mainPlayer!=null) {
-        console.log("player "+game.mainPlayer+" is ready");
-        game.socket.emit("ready",game.mainPlayer-1);
-    }
-  },
+  	playerIsReady: function(){
+    	if(game.mainPlayer!=0&&game.mainPlayer!=null) {
+        	console.log("player "+game.mainPlayer+" is ready");
+        	game.socket.emit("ready",game.mainPlayer-1);
+    	}
+  	},
 	//Affichage des scores
 	score : function(){
 		if(game.ball.posX <= -3){
 			this.players[1].score += 1;
 			this.socket.emit('score',this.players[0].score,this.players[1].score);
+			//gestion des scores sans socket
 			//this.clearLayer(this.scoreLayer);
 			//this.displayScore(this.playerOne.score,this.playerTwo.score);
 			return true;
@@ -74,42 +71,40 @@ var game = {
 		  else if(game.ball.posX >= 700){
 			this.players[0].score += 1;
 			this.socket.emit('score',this.players[0].score,this.players[1].score);
+			//gestion des scores sans socket
 			//this.clearLayer(this.scoreLayer);
 			//this.displayScore(this.playerOne.score,this.playerTwo.score);
 			return true;
 		}
 		  return false;
 	 },
-	//function to connect game
+	//Fonction pour se connecter au jeu 
 	initConnection : function(){
-    this.socket.on("move",function(data) {
-      for(let item in data) {
-		game.players[item]= data[item];
-	  }
-    game.clearLayer(game.playersBallLayer);
-    // game.movePlayers();
-    game.displayPlayers();
-    game.displayBall();
+		this.socket.on("move",function(data) {
+		for(let item in data) {
+			game.players[item]= data[item];
+		}
+		game.clearLayer(game.playersBallLayer);
+		game.displayPlayers();
+		game.displayBall();
     });
     this.socket.on("ball",function(ball,players){
       game.ball=ball;
       game.players=players;
       game.clearLayer(game.playersBallLayer);
-    // game.movePlayers();
       game.displayPlayers();
       game.displayBall();
 	});
-	//gestion des score en socket
+
+	//gestion des score avec les socket (les scores sont géré seulement par le joueur1)
 	this.socket.on('score',function(score1,score2){
-		//console.log("player1 : "+score1+"Player2 : "+score2);
 		game.players[0].score = score1;
 		game.players[1].score = score2;
-		//console.log("player1 : "+game.playerOne.score+"Player2 : "+game.playerTwo.score);
 		game.clearLayer(game.scoreLayer);
 		game.displayScore(game.players[0].score,game.players[1].score);
 	})
 	},
-	//displays function
+	//
 	displayScore : function(scorePlayer1, scorePlayer2) {
 		game.display.drawTextInLayer(this.scoreLayer, scorePlayer1, "60px Arial", "#FFFFFF", this.scorePosPlayer1, 55);
 		game.display.drawTextInLayer(this.scoreLayer, scorePlayer2, "60px Arial", "#FFFFFF", this.scorePosPlayer2, 55);
@@ -132,11 +127,11 @@ var game = {
 		this.ball.bounce(this.wallSound);
 		this.displayBall();
 	},  
-	// clear call in order to delete previous trail 
+	// supprimer le score 
 	clearLayer : function(targetLayer) {
 		targetLayer.clear();
 	},
-  	//control
+  	//controle
   	initKeyboard : function(onKeyDownFunction, onKeyUpFunction) {
   		window.onkeydown = onKeyDownFunction;
   		window.onkeyup = onKeyUpFunction;
@@ -145,12 +140,12 @@ var game = {
   	initMouse : function(onMouseMoveFunction) {
   		window.onmousemove = onMouseMoveFunction;
   	},
-  	// Move
+  	// bouger les joueurs
 	movePlayers : function() {
     game.movePlayer(game.players[0]);
     game.movePlayer(game.players[1]);
 	},
-  // Move a player
+  // Bouger le joueur
     movePlayer : function(player) {
 		if ( game.control.controlSystem == "KEYBOARD" ) {
 		// keyboard control
@@ -173,11 +168,9 @@ var game = {
   collideBallWithPlayersAndAction : function() { 
     if ( this.ball.collide(game.playerOne) ) {
     	game.ball.directionX = -game.ball.directionX;
-    	//this.colideSound.play()
     }
     if ( this.ball.collide(game.playerTwo) ) {
     	game.ball.directionX = -game.ball.directionX;
-    	//this.colideSound.play()
     }
   }, 
 };
