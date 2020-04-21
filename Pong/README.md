@@ -29,4 +29,4 @@ En cas de problème relancez le server.
 <br>
 <H2>Quatre joueurs</H2>
 
-![Alt text](/Image/pong2.PNG?raw=true "4 joueurs")
+![Alt text](/Image/pong4.PNG?raw=true "4 joueurs")
