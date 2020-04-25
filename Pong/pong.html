@@ -1,4 +1,5 @@
 <html>
+  <body style="background-color:#000000;"></body>
   <head>
     <link rel='stylesheet' type='text/css' href='css/css.css' >
   </head>
@@ -36,13 +37,13 @@
   
   var initialisation = function() {
     game.requestGameDatas();
-    // le code de l'initialisation
-    requestAnimId = window.requestAnimationFrame(main); // premier appel de main au rafraîchissement de la page
+    //Initialisation
+    requestAnimId = window.requestAnimationFrame(main); // rafraîchissement de la page
   }
   
   var main = function() {
     // le code du jeu
-    if (game.mainPlayer == 1){
+    if (game.mainPlayer == 2){
       game.score();
     }
     requestAnimId = window.requestAnimationFrame(main); // rappel de main au prochain rafraîchissement de la page
@@ -50,7 +51,6 @@
   
   window.onload = initialisation; // appel de la fonction initialisation au chargement de la page
   
-  // fin du code isolé
 })();
 </script> 
 </html>

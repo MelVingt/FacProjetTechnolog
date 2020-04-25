@@ -114,7 +114,6 @@ var ball = {
             if(typeof anotherItem !== "undefined")
             if ( !( this.posX >= anotherItem.posX + anotherItem.width || this.posX <= anotherItem.posX
               || this.posY >= anotherItem.posY + anotherItem.height || this.posY <= anotherItem.posY ) ) {
-        // Collision
             return true;
             } 
           return false;
@@ -140,17 +139,16 @@ var moveTools= {
       moveTools.movePlayer(players[index]);
     }
   },
-  // Move a player
     movePlayer : function(player) {
     if ( game.control.controlSystem == "KEYBOARD" ) {
-    // keyboard control
+    // clavier
       if (player.goUp && player.posY > 0) {
         player.posY-=7;
       }
       else if (player.goDown && player.posY < 400 - player.height) {
         player.posY+=7;
       } else if ( game.control.controlSystem == "MOUSE" ) {
-        //mouse control
+        //mouse 
         if (game.playerOne.goUp && game.playerOne.posY > game.control.mousePointer) {
         player.posY-=5;
         } else if (game.playerOne.goDown && game.playerOne.posY < game.control.mousePointer) {

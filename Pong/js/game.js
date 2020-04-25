@@ -13,6 +13,7 @@ var game = {
 	//On choisi le 
 	//main player = player de la fenêtre
 	mainPlayer : null,
+	playerReady : true,
 	setMainPlayer : function(){
 	var myselect = document.getElementById("choixPlayer");
 	this.mainPlayer = myselect.options[myselect.selectedIndex].value;
@@ -38,7 +39,7 @@ var game = {
       })
     },
     init : function() {
-    	this.groundLayer = game.display.createLayer("terrain", this.groundWidth, this.groundHeight, undefined, 0, "#000000", 0, 0); 
+    	this.groundLayer = game.display.createLayer("terrain", this.groundWidth, this.groundHeight, undefined, 0, "#555555", 0, 0); 
     	game.display.drawRectangleInLayer(this.groundLayer, this.netWidth, this.groundHeight, this.netColor, this.groundWidth/2 - this.netWidth/2, 0);
     	this.scoreLayer = game.display.createLayer("score", this.groundWidth, this.groundHeight, undefined, 1, undefined, 0, 0);
     	this.playersBallLayer = game.display.createLayer("joueursetballe", this.groundWidth, this.groundHeight, undefined, 2, undefined, 0, 0);  
@@ -53,9 +54,10 @@ var game = {
 		this.socket.emit("numberOfPlayer",parseInt(numberOfPlayer));
 	},
   	playerIsReady: function(){
-    	if(game.mainPlayer!=0&&game.mainPlayer!=null) {
+    	if(game.mainPlayer!=0&&game.mainPlayer!=null&&game.playerReady) {
         	console.log("player "+game.mainPlayer+" is ready");
-        	game.socket.emit("ready",game.mainPlayer-1);
+			game.socket.emit("ready",game.mainPlayer-1);
+			game.playerReady = false;
     	}
   	},
 	//Affichage des scores

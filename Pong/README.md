@@ -14,6 +14,8 @@ Informations complémentaires :
 <br>
 -Pour recommencer une partie veuillez relancer le sevrer.
 <br></br>
+Il ne faut jamais refresh la page web 
+<br></br>
 En cas de problème relancez le server.
 
 <H1>Photo</H1>
